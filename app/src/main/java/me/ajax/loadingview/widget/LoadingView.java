@@ -26,10 +26,10 @@ public class LoadingView extends View {
     RectF outRectF = new RectF(-dp2Dx(60), dp2Dx(-60), dp2Dx(60), dp2Dx(60));
     RectF inRectF = new RectF(-dp2Dx(35), dp2Dx(-35), dp2Dx(35), dp2Dx(35));
 
-    int outAnimationValue = 0;
     int animationRepeatCount;
     ValueAnimator animator;
 
+    boolean isStart = false;
 
     public LoadingView(Context context) {
         super(context);
@@ -56,28 +56,33 @@ public class LoadingView extends View {
         linePaint.setTextSize(dp2Dx(14));
         linePaint.setStyle(Paint.Style.STROKE);
 
-        post(new Runnable() {
-            @Override
-            public void run() {
+        initAnimator();
 
-                animator = ValueAnimator.ofInt(0, 360);
-                animator.setDuration(1000);
-                animator.setInterpolator(new AccelerateInterpolator());
-                animator.addListener(new AnimatorListenerAdapter() {
-                    @Override
-                    public void onAnimationRepeat(Animator animation) {
-                        animationRepeatCount++;
-                    }
-                });
-                animator.setRepeatCount(Integer.MAX_VALUE - 1);
-                animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
-                    @Override
-                    public void onAnimationUpdate(ValueAnimator animation) {
-                        outAnimationValue = (int) animation.getAnimatedValue();
-                        invalidateView();
-                    }
-                });
+        setOnClickListener(new OnClickListener() {
+            @Override
+            public void onClick(View v) {
                 animator.start();
+                isStart = true;
+            }
+        });
+    }
+
+    void initAnimator() {
+
+        animator = ValueAnimator.ofInt(0, 360);
+        animator.setDuration(1000);
+        animator.setInterpolator(new AccelerateInterpolator());
+        animator.addListener(new AnimatorListenerAdapter() {
+            @Override
+            public void onAnimationRepeat(Animator animation) {
+                animationRepeatCount++;
+            }
+        });
+        animator.setRepeatCount(Integer.MAX_VALUE - 1);
+        animator.addUpdateListener(new ValueAnimator.AnimatorUpdateListener() {
+            @Override
+            public void onAnimationUpdate(ValueAnimator animation) {
+                invalidateView();
             }
         });
     }
@@ -93,17 +98,18 @@ public class LoadingView extends View {
         canvas.translate(mWidth / 2, mHeight / 2);
 
 
+        int animationValue = !isStart ? 90 : (int) animator.getAnimatedValue();
         if (animationRepeatCount % 2 == 0) {
-            outAnimationValue *= 2;
-            linePaint.setAlpha(255 - (int) (outAnimationValue / 720F * 255F));
-            canvas.drawArc(outRectF, outAnimationValue, 360 - outAnimationValue / 2, false, linePaint);
-            linePaint.setAlpha((int) (outAnimationValue / 720F * 255F));
-            canvas.drawArc(inRectF, -outAnimationValue, -outAnimationValue / 2, false, linePaint);
+            animationValue *= 2;
+            linePaint.setAlpha(255 - (int) (animationValue / 720F * 255F));
+            canvas.drawArc(outRectF, animationValue, 360 - animationValue / 2, false, linePaint);
+            linePaint.setAlpha((int) (animationValue / 720F * 255F));
+            canvas.drawArc(inRectF, -animationValue, -animationValue / 2, false, linePaint);
         } else {
-            linePaint.setAlpha((int) (outAnimationValue / 360F * 255F));
-            canvas.drawArc(outRectF, outAnimationValue / 2, outAnimationValue, false, linePaint);
-            linePaint.setAlpha(255 - (int) (outAnimationValue / 360F * 255F));
-            canvas.drawArc(inRectF, -outAnimationValue / 2, -(360 - outAnimationValue), false, linePaint);
+            linePaint.setAlpha((int) (animationValue / 360F * 255F));
+            canvas.drawArc(outRectF, animationValue / 2, animationValue, false, linePaint);
+            linePaint.setAlpha(255 - (int) (animationValue / 360F * 255F));
+            canvas.drawArc(inRectF, -animationValue / 2, -(360 - animationValue), false, linePaint);
         }
 
         canvas.restore();
