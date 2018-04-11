@@ -1,4 +1,4 @@
-package me.ajax.leafloading;
+package me.ajax.loadingview.widget;
 
 import android.animation.Animator;
 import android.animation.AnimatorListenerAdapter;
@@ -6,7 +6,6 @@ import android.animation.ValueAnimator;
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Paint;
-import android.graphics.Path;
 import android.graphics.RectF;
 import android.os.Handler;
 import android.os.Looper;
@@ -14,16 +13,13 @@ import android.support.annotation.Nullable;
 import android.util.AttributeSet;
 import android.util.Log;
 import android.view.View;
-import android.view.animation.AccelerateDecelerateInterpolator;
 import android.view.animation.AccelerateInterpolator;
-import android.view.animation.DecelerateInterpolator;
-import android.view.animation.LinearInterpolator;
 
 /**
  * Created by aj on 2018/4/2
  */
 
-public class LoadingView2 extends View {
+public class LoadingView extends View {
 
     Paint linePaint = new Paint();
 
@@ -35,17 +31,17 @@ public class LoadingView2 extends View {
     ValueAnimator animator;
 
 
-    public LoadingView2(Context context) {
+    public LoadingView(Context context) {
         super(context);
         init();
     }
 
-    public LoadingView2(Context context, @Nullable AttributeSet attrs) {
+    public LoadingView(Context context, @Nullable AttributeSet attrs) {
         super(context, attrs);
         init();
     }
 
-    public LoadingView2(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
+    public LoadingView(Context context, @Nullable AttributeSet attrs, int defStyleAttr) {
         super(context, attrs, defStyleAttr);
         init();
     }
@@ -64,7 +60,7 @@ public class LoadingView2 extends View {
             @Override
             public void run() {
 
-                ValueAnimator animator = ValueAnimator.ofInt(0, 360);
+                animator = ValueAnimator.ofInt(0, 360);
                 animator.setDuration(1000);
                 animator.setInterpolator(new AccelerateInterpolator());
                 animator.addListener(new AnimatorListenerAdapter() {
@@ -132,7 +128,7 @@ public class LoadingView2 extends View {
             postInvalidate();
         }
     }
-/*
+
     @Override
     protected void onDetachedFromWindow() {
         super.onDetachedFromWindow();
@@ -141,14 +137,11 @@ public class LoadingView2 extends View {
 
     private void stopAnimAndRemoveCallbacks() {
 
-        if (waterDropAnimator != null) waterDropAnimator.end();
-        if (waveAnimator1 != null) waveAnimator1.end();
-        if (waveAnimator2 != null) waveAnimator2.end();
-        if (waveAnimator3 != null) waveAnimator3.end();
+        if (animator != null) animator.end();
 
         Handler handler = this.getHandler();
         if (handler != null) {
             handler.removeCallbacksAndMessages(null);
         }
-    }*/
+    }
 }
